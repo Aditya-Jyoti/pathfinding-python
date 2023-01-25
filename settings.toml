@@ -1,0 +1,10 @@
+[project]
+author = "Aditya"
+description = "A* pathfinding algorithm implementation written in python for the pathfinding into programming project"
+version = "beta"
+license = "MIT"
+
+[settings]
+cell_size = 15
+row_cells = 50
+col_cells = 50  
