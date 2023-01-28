@@ -1,7 +1,7 @@
 [project]
 author = "Aditya"
 description = "A* pathfinding algorithm implementation written in python for the pathfinding into programming project"
-version = "beta"
+version = "v1.0"
 license = "MIT"
 
 [settings]
