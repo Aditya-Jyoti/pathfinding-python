@@ -5,7 +5,7 @@ if __name__ == "__main__":
     with open("settings.toml", "r") as toml_file:
         contents = toml_load(toml_file)
         settings = contents["settings"]
-        about = contents["projects"]
+        about = contents["project"]
 
     print(f"""
     {about['description']}

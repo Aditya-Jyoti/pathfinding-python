@@ -1,5 +1,6 @@
 from .helpers import *
 import pygame as pg
+from time import sleep
 
 
 class Pathfinder:
@@ -118,6 +119,9 @@ class Pathfinder:
                         ret = self.pathfind()
                         while not ret:
                             ret = self.pathfind()
+                            sleep(0.1)
+                            self.draw_board()
+                            pg.display.update()
 
                 if event.type == pg.MOUSEBUTTONDOWN:
                     mouse_pos = pg.mouse.get_pos()
@@ -161,6 +165,6 @@ class Pathfinder:
                             node.state = "idle"
 
             self.draw_board()
-
             self.clock.tick(60)
             pg.display.update()
+
