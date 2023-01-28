@@ -17,7 +17,7 @@ class Pathfinder:
         self.clock = pg.time.Clock()
 
         self.game_board = [
-            [Node(x, y) for x in range(self.row_cells) for y in range(self.col_cells)]
+            [Node(x, y) for x in range(self.row_cells)] for y in range(self.col_cells)
         ]
 
         self.start_node = None
@@ -57,18 +57,27 @@ class Pathfinder:
                 pg.Rect(0, y_idx * self.cell_size, self.row_cells * self.cell_size, 3),
             )
 
-    def pathfind(self) -> None:
+    def solve_path(self, node: Node) -> Node:
+        if node.parent is None:
+            return node
+
+        self.game_board[node.y_pos][node.x_pos].isEndNode = True
+        return self.solve_path(node.parent)
+
+    def pathfind(self) -> Optional[bool]:
         if not isinstance(self.end_node, Node):
             return
         if not isinstance(self.start_node, Node):
             return
 
         current_node: Node = sorted(self.open_nodes, key=lambda node: node.f_cost)[0]
-        self.open_nodes.pop(self.open_nodes.index(current_node))
+        current_node.state = "traversed"
+        popped = self.open_nodes.pop(self.open_nodes.index(current_node))
+        self.closed_nodes.append(popped)
 
         if current_node == self.end_node:
-            # self.solve_path(current_node)
-            pass
+            self.solve_path(current_node)
+            return True
 
         for nbr_x, nbr_y in current_node.get_neighbours(self.row_cells, self.col_cells):
             neighbour_node = self.game_board[nbr_y][nbr_x]
@@ -103,6 +112,53 @@ class Pathfinder:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
                     running = False
+
+                if event.type == pg.KEYDOWN:
+                    if event.key == pg.K_SPACE:
+                        ret = self.pathfind()
+                        while not ret:
+                            ret = self.pathfind()
+
+                if event.type == pg.MOUSEBUTTONDOWN:
+                    mouse_pos = pg.mouse.get_pos()
+                    mouse_pos_x = mouse_pos[0] // self.cell_size
+                    mouse_pos_y = mouse_pos[1] // self.cell_size
+
+                    if pg.mouse.get_pressed()[0]:
+                        if not self.start_node:
+                            self.start_node = self.game_board[mouse_pos_y][mouse_pos_x]
+                            self.start_node.isStartNode = True
+                            self.open_nodes.append(self.start_node)
+
+                        elif not self.end_node:
+                            self.end_node = self.game_board[mouse_pos_y][mouse_pos_x]
+                            self.end_node.isEndNode = True
+
+                if event.type == pg.MOUSEMOTION:
+                    if not self.start_node and not self.end_node:
+                        continue
+
+                    mouse_pos = pg.mouse.get_pos()
+                    mouse_pos_x = mouse_pos[0] // self.cell_size
+                    mouse_pos_y = mouse_pos[1] // self.cell_size
+                    pressed = pg.mouse.get_pressed()
+                    node = self.game_board[mouse_pos_y][mouse_pos_x]
+
+                    if pressed[0]:
+                        if (
+                            node.state == "idle"
+                            and not node.isStartNode
+                            and not node.isEndNode
+                        ):
+                            node.state = "blocked"
+
+                    elif pressed[2]:
+                        if (
+                            node.state == "blocked"
+                            and not node.isStartNode
+                            and not node.isEndNode
+                        ):
+                            node.state = "idle"
 
             self.draw_board()
 

@@ -40,6 +40,6 @@ class Node:
     def get_neighbours(self, row_cells: int, col_cells: int) -> List[Tuple[int, int]]:
         return [
             (self.x_pos + x, self.y_pos + y)
-            for x, y in [(-1, 0), (0, 1), (1, 0), (0, 1)]
-            if 0 <= self.x_pos + x < row_cells and 0 <= self.y_pos < col_cells
+            for x, y in [(-1, 0), (0, 1), (1, 0), (0, -1)]
+            if 0 <= self.x_pos + x < row_cells and 0 <= self.y_pos + y < col_cells
         ]
