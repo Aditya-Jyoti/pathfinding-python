@@ -42,6 +42,7 @@ Hit space bar to run the program when satisfied with the board state
 
 ## Visualization 
 
-https://user-images.githubusercontent.com/75803854/215266776-a2ce0a9c-c99f-448a-b349-00ea67cfc1ed.mp4
+https://user-images.githubusercontent.com/75803854/215267836-690e5bf7-b81b-4d8a-a21f-eb12953eaefc.mp4
+
 
 
