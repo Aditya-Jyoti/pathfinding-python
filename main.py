@@ -6,4 +6,4 @@ if __name__ == "__main__":
         settings = toml_load(toml_file)["settings"]
 
     pathfinder = Pathfinder(settings)
-    pathfinder.pathfind()
+    pathfinder.main()

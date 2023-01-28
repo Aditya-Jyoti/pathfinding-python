@@ -20,80 +20,28 @@ class Pathfinder:
             [Node(x, y) for x in range(self.row_cells) for y in range(self.col_cells)]
         ]
 
+        self.start_node = None
+        self.end_node = None
+        self.open_nodes = []
+        self.closed_nodes = []
+
     def draw_board(self) -> None:
         for row in self.game_board:
             for node in row:
-                if node.state == "idle":
-                    pg.draw.rect(
-                        self.screen,
-                        IDLE,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
-
-                elif node.state == "traversed":
-                    pg.draw.rect(
-                        self.screen,
-                        TRAVERSED,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
-
-                elif node.state == "blocked":
-                    pg.draw.rect(
-                        self.screen,
-                        BLOCKED,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
-
-                elif node.state == "neighbour":
-                    pg.draw.rect(
-                        self.screen,
-                        NEIGHBOUR,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
-
-                if node.isStartNode:
-                    pg.draw.rect(
-                        self.screen,
-                        START,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
-
-                elif node.isEndNode:
-                    pg.draw.rect(
-                        self.screen,
-                        END,
-                        pg.Rect(
-                            node.x_pos * self.cell_size,
-                            node.y_pos * self.cell_size,
-                            self.cell_size,
-                            self.cell_size,
-                        ),
-                    )
+                pg.draw.rect(
+                    self.screen,
+                    START
+                    if node.isStartNode
+                    else END
+                    if node.isEndNode
+                    else eval(node.state.upper()),
+                    pg.Rect(
+                        node.x_pos * self.cell_size,
+                        node.y_pos * self.cell_size,
+                        self.cell_size,
+                        self.cell_size,
+                    ),
+                )
 
         for x_idx in range(self.row_cells + 1):
             pg.draw.rect(
@@ -110,6 +58,45 @@ class Pathfinder:
             )
 
     def pathfind(self) -> None:
+        if not isinstance(self.end_node, Node):
+            return
+        if not isinstance(self.start_node, Node):
+            return
+
+        current_node: Node = sorted(self.open_nodes, key=lambda node: node.f_cost)[0]
+        self.open_nodes.pop(self.open_nodes.index(current_node))
+
+        if current_node == self.end_node:
+            # self.solve_path(current_node)
+            pass
+
+        for nbr_x, nbr_y in current_node.get_neighbours(self.row_cells, self.col_cells):
+            neighbour_node = self.game_board[nbr_y][nbr_x]
+
+            if neighbour_node.state == "blocked" or neighbour_node in self.closed_nodes:
+                continue
+
+            new_g_cost = pythagorean_distance(neighbour_node, self.start_node)
+            if (
+                new_g_cost < neighbour_node.g_cost
+                or neighbour_node not in self.open_nodes
+            ):
+                new_h_cost = pythagorean_distance(neighbour_node, self.end_node)
+
+                if new_g_cost < neighbour_node.g_cost:
+                    neighbour_node.update_node_costs(new_h_cost, new_g_cost)
+                else:
+                    neighbour_node.update_node_costs(new_h_cost)
+
+                neighbour_node.parent = current_node
+                neighbour_node.state = "neighbour"
+
+                if neighbour_node not in self.open_nodes:
+                    self.open_nodes.append(neighbour_node)
+
+            self.game_board[nbr_y][nbr_x] = neighbour_node
+
+    def main(self) -> None:
         self.screen.fill((255, 255, 255))
         running = True
         while running:

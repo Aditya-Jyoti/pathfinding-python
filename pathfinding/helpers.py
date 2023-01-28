@@ -27,14 +27,19 @@ class Node:
     isEndNode: bool = False  # is it the start node
     parent: Optional[Node] = None  # node originated from
 
+    def __eq__(self, comparing_node: Node) -> bool:
+        return self.x_pos == comparing_node.x_pos and self.y_pos == comparing_node.y_pos
+
+    def update_node_costs(self, new_h_cost: float, new_g_cost: Optional[float] = None) -> None:
+        if new_g_cost:
+            self.g_cost = new_g_cost
+
+        self.h_cost = new_h_cost
+        self.f_cost = self.g_cost + self.h_cost
+
     def get_neighbours(self, row_cells: int, col_cells: int) -> List[Tuple[int, int]]:
         return [
             (self.x_pos + x, self.y_pos + y)
             for x, y in [(-1, 0), (0, 1), (1, 0), (0, 1)]
             if 0 <= self.x_pos + x < row_cells and 0 <= self.y_pos < col_cells
         ]
-
-    def update_node_costs(self, start_node: Node, end_node: Node) -> None:
-        self.g_cost += pythagorean_distance(self, start_node)
-        self.h_cost += pythagorean_distance(self, end_node)
-        self.f_cost += self.g_cost + self.h_cost
