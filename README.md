@@ -42,4 +42,6 @@ Hit space bar to run the program when satisfied with the board state
 
 ## Visualization 
 
-![algo visualization](assets/pathfinding-python.mp4)
+https://user-images.githubusercontent.com/75803854/215266776-a2ce0a9c-c99f-448a-b349-00ea67cfc1ed.mp4
+
+
