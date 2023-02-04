@@ -5,6 +5,7 @@ version = "v1.0"
 license = "MIT"
 
 [settings]
-cell_size = 15
-row_cells = 50
-col_cells = 50  
+cell_size = 20
+row_cells = 40
+col_cells = 40  
+add_wait_time = true
